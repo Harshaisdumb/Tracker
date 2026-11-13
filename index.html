@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cycle Tracker</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#fff5f7;--card:#fff;--ink:#3b2230;--mute:#8a6b78;--rose:#e0476f;--soft:#fde1e8;--fert:#cfe8ff;--ovu:#5aa9f0;--line:#f1d3dc}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1e1318;--card:#2a1a22;--ink:#f6e6ec;--mute:#b99aa8;--rose:#ff6b94;--soft:#4a2432;--fert:#1d3550;--ovu:#5aa9f0;--line:#43303a}}
+:root[data-theme="dark"]{--bg:#1e1318;--card:#2a1a22;--ink:#f6e6ec;--mute:#b99aa8;--rose:#ff6b94;--soft:#4a2432;--fert:#1d3550;--ovu:#5aa9f0;--line:#43303a}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background-color:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.45;min-height:100vh;
+background-image:
+radial-gradient(circle at 12% 8%,rgba(255,150,180,.22),transparent 45%),
+radial-gradient(circle at 90% 85%,rgba(255,190,150,.18),transparent 50%),
+url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .55 0 0 0 0 .3 0 0 0 0 .4 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.3'/%3E%3C/svg%3E"),
+url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cg fill='%23e0476f' fill-opacity='.11'%3E%3Cg transform='translate(35 35)'%3E%3Ccircle cx='0' cy='-9' r='7'/%3E%3Ccircle cx='8.5' cy='-3' r='7'/%3E%3Ccircle cx='5' cy='7' r='7'/%3E%3Ccircle cx='-5' cy='7' r='7'/%3E%3Ccircle cx='-8.5' cy='-3' r='7'/%3E%3C/g%3E%3Cg transform='translate(105 105) scale(.8)'%3E%3Ccircle cx='0' cy='-9' r='7'/%3E%3Ccircle cx='8.5' cy='-3' r='7'/%3E%3Ccircle cx='5' cy='7' r='7'/%3E%3Ccircle cx='-5' cy='7' r='7'/%3E%3Ccircle cx='-8.5' cy='-3' r='7'/%3E%3C/g%3E%3Cpath d='M35 118c-10-7-14-12-9-17 3-3 7-2 9 1 2-3 6-4 9-1 5 5 1 10-9 17z'/%3E%3C/g%3E%3Cg fill='%23f6b04a' fill-opacity='.2'%3E%3Ccircle cx='35' cy='35' r='3.5'/%3E%3Ccircle cx='105' cy='105' r='3'/%3E%3C/g%3E%3Cg fill='%235aa56f' fill-opacity='.13'%3E%3Cpath d='M98 28c8-8 18-8 22 0-8 8-18 8-22 0z'/%3E%3Cpath d='M20 80c6-7 14-7 18 0-6 7-14 7-18 0z'/%3E%3Cpath d='M70 70c4-6 10-6 13 0-4 6-10 6-13 0z'/%3E%3C/g%3E%3C/svg%3E");
+background-attachment:fixed,fixed,scroll,scroll}
+main{max-width:640px;margin:0 auto;padding:16px}
+h1{font-size:22px;margin:4px 0 2px}h2{font-size:16px;margin:0 0 10px}
+.sub{color:var(--mute);font-size:14px;margin:0 0 14px}
+.card{background:var(--card);background:color-mix(in srgb,var(--card) 90%,transparent);backdrop-filter:blur(3px);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:14px;box-shadow:0 6px 20px rgba(224,71,111,.08)}
+.hero{text-align:center}
+.big{font-size:44px;font-weight:700;color:var(--rose);line-height:1}
+.pill{display:inline-block;padding:4px 12px;border-radius:99px;background:var(--soft);color:var(--rose);font-size:13px;font-weight:600;margin-top:8px}
+label{display:block;font-size:13px;color:var(--mute);margin:8px 0 3px}
+input,select{width:100%;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:15px}
+.row{display:flex;gap:10px}.row>*{flex:1}
+button{font:inherit;cursor:pointer;border:0;border-radius:10px;padding:10px 14px;background:var(--rose);color:#fff;font-weight:600}
+button.ghost{background:var(--soft);color:var(--rose)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:var(--bg);color:var(--ink);border:1px solid var(--line);padding:7px 12px;border-radius:99px;font-weight:500;font-size:14px}
+.chip.on{background:var(--rose);color:#fff;border-color:var(--rose)}
+.cal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;font-size:13px}
+.dow{color:var(--mute);font-size:11px}
+.day{padding:8px 0;border-radius:8px;border:2px solid transparent}
+.day.p{background:var(--rose);color:#fff}.day.f{background:var(--fert)}.day.o{background:var(--ovu);color:#fff}
+.day.t{border-color:var(--ink)}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--mute);margin-top:10px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px}
+.banner{background:var(--rose);color:#fff;border-radius:14px;padding:12px 14px;margin-bottom:14px;display:none;font-weight:600}
+.tips li{margin-bottom:6px}
+.log{font-size:13px;color:var(--mute);border-top:1px solid var(--line);padding:6px 0}
+.note{font-size:12px;color:var(--mute)}
+</style></head>
+<body><main>
+<h1 id="title">Cycle Tracker 🌸</h1>
+<p class="sub">Gentle predictions, reminders and care tips. Estimates only, not medical advice.</p>
+<div id="banner" class="banner"></div>
+
+<section class="card hero">
+ <div id="count" class="big">–</div>
+ <div id="countlabel" class="sub" style="margin:4px 0 0">Add the last period start date below</div>
+ <span id="phase" class="pill" style="display:none"></span>
+</section>
+
+<section class="card">
+ <h2>Calendar</h2>
+ <div class="cal-head"><button class="ghost" id="prev">‹</button><b id="mon"></b><button class="ghost" id="next">›</button></div>
+ <div class="grid" id="grid"></div>
+ <div class="legend"><span><i style="background:var(--rose)"></i>Period</span><span><i style="background:var(--fert)"></i>Fertile window</span><span><i style="background:var(--ovu)"></i>Ovulation</span></div>
+</section>
+
+<section class="card">
+ <h2>Today’s check-in</h2>
+ <div class="chips" id="moods"></div>
+ <label>Symptoms</label>
+ <div class="chips" id="syms"></div>
+ <label>Note</label>
+ <input id="note" placeholder="Anything else today?">
+</section>
+
+<section class="card">
+ <h2>💝 How to take care today</h2>
+ <ul class="tips" id="tips"></ul>
+</section>
+
+<section class="card">
+ <h2>Settings &amp; reminders</h2>
+ <label>Her name (optional)</label><input id="name" placeholder="e.g. Priya">
+ <label>First day of last period</label><input type="date" id="last">
+ <div class="row">
+  <div><label>Cycle length (days)</label><input type="number" id="cycle" min="21" max="45"></div>
+  <div><label>Period length (days)</label><input type="number" id="plen" min="2" max="10"></div>
+ </div>
+ <label>Remind her</label>
+ <select id="remind"><option value="1">1 day before</option><option value="2">2 days before</option><option value="3">3 days before</option><option value="5">5 days before</option></select>
+ <div class="row" style="margin-top:12px">
+  <button id="save">Save</button>
+  <button class="ghost" id="notify">Enable notifications</button>
+ </div>
+ <div class="row" style="margin-top:10px">
+  <button class="ghost" id="startnow">Period started today</button>
+  <button class="ghost" id="copy">Copy reminder text</button>
+ </div>
+ <p class="note" id="msg"></p>
+ <p class="note">Notifications appear while this page is open in a browser (installing it to the home screen helps). Everything is stored only on this device. Best if she’s the one who sees and controls this data.</p>
+</section>
+
+<section class="card">
+ <h2>Recent check-ins</h2>
+ <div id="history" class="note">Nothing logged yet.</div>
+</section>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const MOODS=['😊 Happy','😌 Calm','😢 Sad','😠 Irritable','😴 Tired','😰 Anxious'];
+const SYMS=['Cramps','Headache','Bloating','Back pain','Cravings','Acne','Nausea','Low energy'];
+let S={name:'',last:'',cycle:28,plen:5,remind:2,logs:{},notified:''};
+try{const r=localStorage.getItem('cycle-v1');if(r)S=Object.assign(S,JSON.parse(r));}catch(e){}
+const save=()=>{try{localStorage.setItem('cycle-v1',JSON.stringify(S));}catch(e){}};
+const D=864e5, iso=d=>{const x=new Date(d);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')};
+const parse=s=>{const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
+const today=()=>{const t=new Date();return new Date(t.getFullYear(),t.getMonth(),t.getDate())};
+const diff=(a,b)=>Math.round((a-b)/D);
+const mod=(n,m)=>((n%m)+m)%m;
+function kind(date){ // returns 'p','o','f' or ''
+ if(!S.last)return '';
+ const i=mod(diff(date,parse(S.last)),S.cycle);
+ if(i<S.plen)return 'p';
+ const ov=S.cycle-15;
+ if(i===ov)return 'o';
+ if(i>=ov-5&&i<=ov+1)return 'f';
+ return '';
+}
+function nextPeriod(){
+ let n=parse(S.last);const t=today();
+ while(n<t)n=new Date(n.getTime()+S.cycle*D);
+ return n;
+}
+function phase(){
+ const i=mod(diff(today(),parse(S.last)),S.cycle),ov=S.cycle-15;
+ if(i<S.plen)return['Period · day '+(i+1),'period'];
+ if(i===ov)return['Ovulation day','ovu'];
+ if(i>=ov-5&&i<=ov+1)return['Fertile window','fert'];
+ if(i<ov)return['Follicular phase','foll'];
+ return['Luteal phase (PMS possible)','lut'];
+}
+const TIPS={
+ period:['Offer a heating pad or warm drink 🍵','Ask what she needs: space, snacks or company','Take over a chore or two, rest matters today','Iron-rich food, chocolate, comfort movie night'],
+ foll:['Energy usually rises, great time for plans or dates','Be encouraging; she may feel more social','Keep supplies stocked for the next cycle'],
+ fert:['Mood and energy are often high','A good time for outings','Talk about contraception/plans openly if relevant'],
+ ovu:['Many people feel their best around now','Plan something fun together'],
+ fert2:[],
+ lut:['PMS may show up: patience and kindness go far','Stock her favourite snacks and keep plans light','Avoid dismissing feelings; listen first','Gentle walks or a calm evening can help'],
+ none:['Enter the last period date in Settings to get tailored tips']
+};
+function render(){
+ $('title').textContent=(S.name?S.name+'’s ':'')+'Cycle Tracker 🌸';
+ $('name').value=S.name;$('last').value=S.last;$('cycle').value=S.cycle;$('plen').value=S.plen;$('remind').value=S.remind;
+ let key='none';
+ if(S.last){
+  const n=nextPeriod(),d=diff(n,today()),[pl,k]=phase();key=k;
+  $('count').textContent=d===0?'Today':d;
+  $('countlabel').textContent=d===0?'Period is expected today':'day'+(d===1?'':'s')+' until next period (~'+n.toLocaleDateString(undefined,{day:'numeric',month:'short'})+')';
+  $('phase').style.display='inline-block';$('phase').textContent=pl;
+ }
+ $('tips').innerHTML=(TIPS[key]||[]).map(t=>'<li>'+t+'</li>').join('');
+ drawCal();drawLog();checkReminder();
+}
+let view=new Date();view.setDate(1);
+function drawCal(){
+ $('mon').textContent=view.toLocaleDateString(undefined,{month:'long',year:'numeric'});
+ let h=['M','T','W','T','F','S','S'].map(x=>'<div class="dow">'+x+'</div>').join('');
+ const first=mod(view.getDay()-1,7),dim=new Date(view.getFullYear(),view.getMonth()+1,0).getDate();
+ for(let i=0;i<first;i++)h+='<div></div>';
+ for(let d=1;d<=dim;d++){const dt=new Date(view.getFullYear(),view.getMonth(),d);
+  h+='<div class="day '+kind(dt)+(diff(dt,today())===0?' t':'')+'">'+d+'</div>';}
+ $('grid').innerHTML=h;
+}
+$('prev').onclick=()=>{view.setMonth(view.getMonth()-1);drawCal()};
+$('next').onclick=()=>{view.setMonth(view.getMonth()+1);drawCal()};
+// check-in
+const key=()=>iso(today());
+function todayLog(){return S.logs[key()]||(S.logs[key()]={mood:'',syms:[],note:''})}
+function drawChips(){
+ const L=todayLog();
+ $('moods').innerHTML=MOODS.map(m=>'<button class="chip'+(L.mood===m?' on':'')+'" data-m="'+m+'">'+m+'</button>').join('');
+ $('syms').innerHTML=SYMS.map(m=>'<button class="chip'+(L.syms.includes(m)?' on':'')+'" data-s="'+m+'">'+m+'</button>').join('');
+ $('note').value=L.note||'';
+ document.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{L.mood=L.mood===b.dataset.m?'':b.dataset.m;save();drawChips();drawLog()});
+ document.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{const s=b.dataset.s;L.syms=L.syms.includes(s)?L.syms.filter(x=>x!==s):[...L.syms,s];save();drawChips();drawLog()});
+}
+$('note').oninput=e=>{todayLog().note=e.target.value;save();drawLog()};
+function drawLog(){
+ const ks=Object.keys(S.logs).sort().reverse().filter(k=>{const l=S.logs[k];return l.mood||l.syms.length||l.note}).slice(0,7);
+ $('history').innerHTML=ks.length?ks.map(k=>{const l=S.logs[k];return '<div class="log"><b>'+parse(k).toLocaleDateString(undefined,{day:'numeric',month:'short'})+'</b> '+[l.mood,l.syms.join(', '),l.note].filter(Boolean).join(' · ').replace(/</g,'&lt;')+'</div>'}).join(''):'Nothing logged yet.';
+}
+// settings
+$('save').onclick=()=>{
+ S.name=$('name').value.trim();S.last=$('last').value;
+ S.cycle=Math.min(45,Math.max(21,+$('cycle').value||28));S.plen=Math.min(10,Math.max(2,+$('plen').value||5));S.remind=+$('remind').value;
+ S.notified='';save();$('msg').textContent='Saved ✔';render();
+};
+$('startnow').onclick=()=>{S.last=iso(today());S.notified='';save();$('msg').textContent='Cycle restarted from today ✔';render()};
+$('copy').onclick=async()=>{
+ if(!S.last){$('msg').textContent='Add a date first.';return}
+ const n=nextPeriod(),d=diff(n,today());
+ const t='Hey'+(S.name?' '+S.name:'')+' 💗 your period is expected '+(d===0?'today':'in '+d+' day(s)')+'. Want me to bring you anything?';
+ try{await navigator.clipboard.writeText(t);$('msg').textContent='Copied: '+t}catch(e){$('msg').textContent=t}
+};
+$('notify').onclick=async()=>{
+ try{const p=await Notification.requestPermission();$('msg').textContent=p==='granted'?'Notifications on ✔':'Notifications blocked. In-page reminders will still show.'}
+ catch(e){$('msg').textContent='This browser doesn’t allow notifications here. In-page reminders will still show.'}
+};
+function checkReminder(){
+ if(!S.last)return;
+ const d=diff(nextPeriod(),today());
+ if(d>S.remind)return;
+ const text=d===0?'Your period is expected today 🌸 Take it easy and be kind to yourself.':'Your period is expected in '+d+' day'+(d===1?'':'s')+' 🌸 Time to stock up on supplies.';
+ const b=$('banner');b.style.display='block';b.textContent=text;
+ if(S.notified!==key()){
+  S.notified=key();save();
+  try{if(Notification.permission==='granted')new Notification('Cycle reminder',{body:text})}catch(e){}
+ }
+}
+setInterval(checkReminder,60000);
+drawChips();render();
+</script></body></html>
